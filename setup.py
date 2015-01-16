@@ -12,6 +12,15 @@ setup(
         'numpy',
         'scipy',
         'matplotlib',
+        'netCDF4',
+    ]
+    scripts=[
+        'bin/filter.py',
+        'bin/misfit.py',
+        'bin/plot_gather.py',
+        'bin/plot_kernel.py',
+        'bin/plot_media.py',
+        'bin/upsampling.py',
     ]
 
     author = "Lei Pan",
