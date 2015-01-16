@@ -18,6 +18,7 @@ class Fd2dParam():
         self.get_val(fnm, 'pnm_obs', 'string')
         self.get_val(fnm, 'pnm_syn_filter', 'string')
         self.get_val(fnm, 'pnm_obs_filter', 'string')
+        self.get_val(fnm, 'type_filter', 'string')
         self.get_val(fnm, 'low_cut', 'float')
         self.get_val(fnm, 'high_cut', 'float')
 
@@ -54,13 +55,11 @@ def _contpath(folder, fname):
         return folder+'/'+fname
 
 
-def get_numpt(gnsrc, n_i, n_k, folder='.'):
+def get_numpt(n_i, n_k, folder='.'):
     """ Get number of receivers in one block
 
     Parameter
     ---------
-    gnsrc : int
-        No. of the seismic source
     n_i, n_k : int
         Id of the MPI block
 
@@ -69,15 +68,15 @@ def get_numpt(gnsrc, n_i, n_k, folder='.'):
     num_pt : int
         Number of receivers in one block
     """
-    str1 = (folder, gnsrc, n_i, n_k)
-    filenm = '%s/input/station_s%03i_mpi%02i%02i.nc' % str1
+    str1 = (folder, n_i, n_k)
+    filenm = '%s/input/station_mpi%02i%02i.nc' % str1
     fnc = Dataset(filenm, 'r')
     num_pt = len(fnc.dimensions['num_pt'])
     fnc.close()
     return num_pt
 
 
-def get_sta_coord(gnsrc, n_i, n_k, folder='.'):
+def get_sta_coord(n_i, n_k, folder='.'):
     """ Get the location of receivers in x direction.
 
     Parameter
@@ -92,8 +91,8 @@ def get_sta_coord(gnsrc, n_i, n_k, folder='.'):
     coordx : ndarray
         x coordinates of receivers (km)
     """
-    str1 = (folder, gnsrc, n_i, n_k)
-    filenm = '%s/input/station_s%03i_mpi%02i%02i.nc' % str1
+    str1 = (folder, n_i, n_k)
+    filenm = '%s/input/station_mpi%02i%02i.nc' % str1
     fnc = Dataset(filenm, 'r')
     coordx = fnc.variables['coord'][:, 0]/1.e3
     return coordx

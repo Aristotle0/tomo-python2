@@ -20,7 +20,7 @@ for instance:
 plot_media --help
 plot_media --display=vp
 """
-    option_dict = read_option(sys, help_string, 2, 3)
+    option_dict = read_option(sys, help_string, 1, 3)
 
     working_path = option_dict.setdefault('path', '.')
     media_comp = option_dict.setdefault('display', 'vp')

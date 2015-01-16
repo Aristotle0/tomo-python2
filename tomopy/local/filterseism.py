@@ -4,7 +4,7 @@ from .param import Fd2dParam, get_numpt
 import numpy as np
 
 
-def seism_filter(gnsrc, working_path):
+def seism_filter(working_path):
     Nd = 2
     para = Fd2dParam(working_path)
     dim1, dim2 = para.dim
@@ -30,16 +30,17 @@ def seism_filter(gnsrc, working_path):
     pnm_filter = [pnm_syn_filter, pnm_obs_filter]
     pnm_filter = [working_path+'/'+x for x in pnm_filter]
 
-    for n_i in range(dim1):
-        for n_k in range(dim2):
-            num_pt = get_numpt(gnsrc, n_i, n_k, working_path)
-            if num_pt == 0:
-                continue
-            for j_pnm in range(len(pnm_raw)):
-                seism, time = read_seism(pnm_raw[j_pnm], gnsrc, n_i, n_k, nt, num_pt)
-                seism_filter = np.zeros_like(seism)
-                for jd in range(Nd):
-                    for nsta in range(num_pt):
-                        seism_filter[jd, :, nsta] = butter_filter(seism[jd, :, nsta], Wn, btype, fs)
-                write_seism(seism_filter, time, pnm_filter[j_pnm], gnsrc, n_i, n_k, nt, num_pt)
+    for gnsrc in range(1, nsrc+1):
+        for n_i in range(dim1):
+            for n_k in range(dim2):
+                num_pt = get_numpt(n_i, n_k, working_path)
+                if num_pt == 0:
+                    continue
+                for j_pnm in range(len(pnm_raw)):
+                    seism, time = read_seism(pnm_raw[j_pnm], gnsrc, n_i, n_k, nt, num_pt)
+                    seism_filter = np.zeros_like(seism)
+                    for jd in range(Nd):
+                        for nsta in range(num_pt):
+                            seism_filter[jd, :, nsta] = butter_filter(seism[jd, :, nsta], Wn, btype, fs)
+                    write_seism(seism_filter, time, pnm_filter[j_pnm], gnsrc, n_i, n_k, nt, num_pt)
 

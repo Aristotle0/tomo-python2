@@ -1,3 +1,5 @@
+from .param import get_numpt
+from .param import get_sta_coord
 import numpy as np
 from netCDF4 import Dataset
 
@@ -66,7 +68,7 @@ def write_seism(seism, time, folder, gnsrc, n_i, n_k, nt, num_pt):
     fnc.close()
 
 
-def gather_seism(working_path, pnm_seism, dim1, dim2, nsrc, nt):
+def gather_seism(working_path, pnm_seism, id_comp, dim1, dim2, nsrc, nt):
     """ gather all seismograms of a source into one array, and location of receivers into another
 
     Parameters
@@ -75,6 +77,8 @@ def gather_seism(working_path, pnm_seism, dim1, dim2, nsrc, nt):
         path of working directory
     pnm_seism : string
         directory name for gathering seismograms
+    id_comp : int
+        =0 x component, =1 z component
     dim1, dim2 : int
         number of MPI blocks
     nsrc : int
@@ -94,10 +98,10 @@ def gather_seism(working_path, pnm_seism, dim1, dim2, nsrc, nt):
     pnm_seism = working_path +'/'+ pnm_seism
     for ni in range(dim1):
         for nk in range(dim2):
-            num_pt = get_numpt(nsrc, ni, nk, working_path)
+            num_pt = get_numpt(ni, nk, working_path)
             if (num_pt > 0):
                 seism, time = read_seism(pnm_seism, nsrc, ni, nk, nt, num_pt)
-                coordx_sta = get_sta_coord(nsrc, ni, nk, working_path)
+                coordx_sta = get_sta_coord(ni, nk, working_path)
                 for nsta in range(num_pt):
                     seism_gather.append(seism[id_comp, :, nsta])
                     coord_gather.append(coordx_sta[nsta])
