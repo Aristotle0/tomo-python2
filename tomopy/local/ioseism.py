@@ -1,6 +1,5 @@
 import numpy as np
-# from netCDF4 import Dataset
-from scipy.io import netcdf
+from netCDF4 import Dataset
 
 def read_seism(folder, gnsrc, n_i, n_k, nt, num_pt):
     """ Read seismograms
@@ -27,7 +26,7 @@ def read_seism(folder, gnsrc, n_i, n_k, nt, num_pt):
     Ord = ['Vx', 'Vz']
     str1 = (folder, gnsrc, n_i, n_k)
     filenm = '%s/seismo_s%03i_mpi%02i%02i.nc' % str1
-    fnc = netcdf.netcdf_file(filenm, 'r')
+    fnc = Dataset(filenm, 'r')
     seism = np.zeros((nd, nt, num_pt))
     for i in range(nd):
         seism[i, :,  :] = fnc.variables[Ord[i]][:, :]
@@ -57,7 +56,7 @@ def write_seism(seism, time, folder, gnsrc, n_i, n_k, nt, num_pt):
     Ord = ['Vx', 'Vz']
     str1 = (folder, gnsrc, n_i, n_k)
     filenm = '%s/seismo_s%03i_mpi%02i%02i.nc' % str1
-    fnc = netcdf.netcdf_file(filenm, 'w')#, format='NETCDF3_CLASSIC')
+    fnc = Dataset(filenm, 'w', format='NETCDF3_CLASSIC')
     fnc.createDimension('num_pt', num_pt)
     fnc.createDimension('time', nt)
     for i in range(nd):

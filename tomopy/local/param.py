@@ -1,5 +1,4 @@
-# from netCDF4 import Dataset
-from scipy.io import netcdf
+from netCDF4 import Dataset
 import numpy as np
 
 class Fd2dParam():
@@ -73,7 +72,7 @@ def get_numpt(gnsrc, n_i, n_k, folder='.'):
     """
     str1 = (folder, gnsrc, n_i, n_k)
     filenm = '%s/input/station_s%03i_mpi%02i%02i.nc' % str1
-    fnc = netcdf.netcdf_file(filenm, 'r')
+    fnc = Dataset(filenm, 'r')
     num_pt = len(fnc.dimensions['num_pt'])
     fnc.close()
     return num_pt
@@ -96,7 +95,7 @@ def get_sta_coord(gnsrc, n_i, n_k, folder='.'):
     """
     str1 = (folder, gnsrc, n_i, n_k)
     filenm = '%s/input/station_s%03i_mpi%02i%02i.nc' % str1
-    fnc = netcdf.netcdf_file(filenm, 'r')
+    fnc = Dataset(filenm, 'r')
     coordx = fnc.variables['coord'][:, 0]/1.e3
     return coordx
 
@@ -134,7 +133,7 @@ def associate_blocks(path, fname, vname, dim1, dim2, nsrc=None, nfd=0):
             else:
                 fnm = ("%s/%s_s%03i_mpi%02i%02i.nc" %
                     (path, fname, nsrc, n_i, n_k))
-            fnc = netcdf.netcdf_file(fnm, 'r')
+            fnc = Dataset(fnm, 'r')
             block = fnc.variables[vname][:, :]
             block = block[nfd:block.shape[0]-nfd, nfd:block.shape[1]-nfd]
             fnc.close()
