@@ -14,7 +14,7 @@ The type of media information needs to be specified.
 
 --help              show help information
 --display=vp        specify the media type to display
---path=data         current directory by default 
+--path=data         current directory by default
 
 for instance:
 plot_media --help
@@ -37,6 +37,8 @@ plot_media --display=vp
     x = associate_blocks(path, 'coord', 'x', dim1, dim2, nfd=3)
     z = associate_blocks(path, 'coord', 'z', dim1, dim2, nfd=3)
     nz, nx = x.shape
+    x = x/1.e3
+    z = z/1.e3
 
     if media_comp == 'vp':
         media[media_comp] = np.sqrt((media['lambda']+2.*media['mu'])/media['rho'])
@@ -48,8 +50,8 @@ plot_media --display=vp
         clabel = "Density (kg/$m^3)"
 
 
-    size_fig = 16
-    fig = plt.figure(figsize=(size_fig, size_fig*nz/nx))
+    size_fig = 12
+    fig = plt.figure(figsize=(size_fig, 1.5*size_fig*nz/nx))
     ax1 = fig.add_subplot(1, 1, 1)
     mv = media[media_comp]
     pc_min = mv.min()

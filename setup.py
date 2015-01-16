@@ -6,14 +6,14 @@ def read(fname):
 setup(
     name = "tomopy",
     version = "0.0.1",
-    packages = find_packages(tomopy),
+    packages = ['tomopy'],
 
     install_requires=[
         'numpy',
         'scipy',
         'matplotlib',
         'netCDF4',
-    ]
+    ],
     scripts=[
         'bin/filter.py',
         'bin/misfit.py',
@@ -21,12 +21,12 @@ setup(
         'bin/plot_kernel.py',
         'bin/plot_media.py',
         'bin/upsampling.py',
-    ]
+    ],
 
     author = "Lei Pan",
     author_email = "panlei7@gmail.com",
     description = "An additional package for tomo7",
-    long_description = read('README'),
+    long_description = read('README.md'),
     keywords = "tomo7, FWI, model",
 
 )

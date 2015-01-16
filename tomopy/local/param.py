@@ -18,7 +18,6 @@ class Fd2dParam():
         self.get_val(fnm, 'pnm_obs', 'string')
         self.get_val(fnm, 'pnm_syn_filter', 'string')
         self.get_val(fnm, 'pnm_obs_filter', 'string')
-        self.get_val(fnm, 'type_filter', 'string')
         self.get_val(fnm, 'low_cut', 'float')
         self.get_val(fnm, 'high_cut', 'float')
 
