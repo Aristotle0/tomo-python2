@@ -33,7 +33,7 @@ misfit.py --type=wavelet --fmin=20 --fmax=50 --nf=50
     comp = option_dict.setdefault('comp', 'x')
     fmin = float(option_dict.setdefault('fmin', 0))
     fmax = float(option_dict.setdefault('fmax', 0))
-    nf = float(option_dict.setdefault('nf', 0))
+    nf = int(option_dict.setdefault('nf', 0))
 
     get_adjs(working_path, mtype, comp, fmin, fmax, nf)
 

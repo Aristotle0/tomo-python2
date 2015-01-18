@@ -50,10 +50,11 @@ plot_kernel.py --path=data --display=ka --dx=0.025 --cut=0.1
     kv = ker[ker_comp]
     pc_min = kv.min()*cut
     pc_max = kv.max()*cut
-    img = ax1.pcolormesh(x, z, kv, vmin=pc_min, vmax=pc_max)
+    pc_min = min(kv.min(), kv.max())*cut
+    img = ax1.pcolormesh(x, z, kv, vmin=-pc_min, vmax=pc_min)
     ax1.set_xlim([gridx.min(), gridx.max()])
     ax1.set_ylim([gridz.min(), gridz.max()])
     ax1.set_xlabel("distance (km)")
     ax1.set_ylabel("depth (km)")
-    cb = plt.colorbar(img, format='%.1e', ticks=[pc_min, (pc_min+pc_max)/2, pc_max])
+    cb = plt.colorbar(img, format='%.1e', ticks=[-pc_min, 0, pc_min])
     plt.show()

@@ -1,7 +1,20 @@
 from .pycwt import *
 import numpy as np
+from scipy.integrate import simps
 
-__all__ = ['wavemisf', 'waveletmisf']
+__all__ = ['ccmisf', 'wavemisf', 'waveletmisf']
+
+def ccmisf(obs, syn, stept):
+    """ cross-correlation misfit
+    """
+    nt = obs.size
+    corr_lst = np.correlate(obs, syn, 'full')
+    nshift = np.argmax(corr_lst) - nt + 1
+    misf = 1./2*(nshift*stept)**2
+    t = np.arange(nt)*stept
+    nrm = simps(syn**2, t, stept)
+    adjs = nshift*stept/nrm * syn[::-1]
+    return misf, adjs
 
 
 def wavemisf(obs, syn):
@@ -24,7 +37,7 @@ def waveletmisf(obs, syn, fmin, fmax, nf=100):
     misf = np.sum(dphase*np.abs(wt_syn)**2)
     misf /= (2*nrm*np.pi**2)
 
-    weight_function = lambda x: x**(-0.5) 
+    weight_function = lambda x: x**(-0.5)
 
     ker1 = (dphase**2-misf*np.pi*2)*wt_syn
     wavecoefs = Wavelet(ker1, mother_wavelet, weight_function, syn.dtype)
