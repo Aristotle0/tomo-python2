@@ -1,8 +1,9 @@
-from ..signal.misfit_functionals import wavemisf, waveletmisf
+from ..signal.misfit_functionals import wavemisf, waveletmisf, ccmisf
 from .param import Fd2dParam, get_numpt
 from .ioseism import read_seism
 import numpy as np
 from netCDF4 import Dataset
+from scipy.integrate import cumtrapz
 
 def write_misf(misf, adjs, folder, gnsrc, n_i, n_k, nt, num_pt, nd):
     """ Write misfits
@@ -41,11 +42,39 @@ def write_misf(misf, adjs, folder, gnsrc, n_i, n_k, nt, num_pt, nd):
 
 
 def get_adjs(working_path, mtype, comp, fmin, fmax, nf):
+    """ calculate the misfits and the corresponding adjoint source.
+
+    Parameters
+    ----------
+    working_path : string
+        the current working path
+    mtype : string
+        l2 for L2 waveform difference misfits
+        cc for cross-correlation misfits
+        wavelet for CWT misfits
+    comp : string
+        the component of seismograms
+    fmin : float
+        minimium frequency for CWT
+    fmax : float
+        maximium frequency for CWT
+    nf : int
+        number of frequency sampling
+    """
+
+
+    para = Fd2dParam(working_path)
+    dim1, dim2 = para.dim
+    nt = para.nt
+    num_src = para.number_of_moment_source
+    stept = para.stept
 
     if mtype == 'l2':
         misf_func = wavemisf
     elif mtype == 'wavelet':
         misf_func = lambda x, y : waveletmisf(x, y, fmin, fmax, nf)
+    elif mtype == 'cc':
+        misf_func = lambda x, y : ccmisf(x, y, stept)
 
     if comp == 'x':
         id_comp = 0
@@ -54,11 +83,7 @@ def get_adjs(working_path, mtype, comp, fmin, fmax, nf):
         id_comp = 1
         id_misf = 2
 
-    para = Fd2dParam(working_path)
-    dim1, dim2 = para.dim
-    nt = para.nt
-    num_src = para.number_of_moment_source
-    pnm_seism = para.pnm_syn_filter, para.pnm_obs_filter
+    pnm_seism = (para.pnm_syn_filter, para.pnm_obs_filter)
     pnm_seism = [working_path + '/' + x for x in pnm_seism]
     pnm_misf = working_path + '/' + 'misf'
 
@@ -73,8 +98,9 @@ def get_adjs(working_path, mtype, comp, fmin, fmax, nf):
                 misf = np.zeros(seism_syn.shape[2])
                 adjs = np.zeros_like(seism_syn)
                 for nsta in range(num_pt):
-                    misf[nsta], adjs[id_comp, :, nsta] = misf_func(seism_obs[id_comp, :, nsta],
-                        seism_syn[id_comp, :, nsta])
+                    disp_obs = cumtrapz(seism_obs[id_comp, :, nsta], dx=stept, initial=0)
+                    disp_syn = cumtrapz(seism_syn[id_comp, :, nsta], dx=stept, initial=0)
+                    misf[nsta], adjs[id_comp, :, nsta] = misf_func(disp_obs, disp_syn)
                 write_misf(misf, adjs[id_comp, :, :], pnm_misf, nsrc, n_i, n_k, nt, num_pt, id_misf)
 
 
