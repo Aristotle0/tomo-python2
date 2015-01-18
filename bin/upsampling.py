@@ -14,6 +14,9 @@ results to finer grid.
 
 --help          show help information
 --path=data     current directory by default
+
+for instance:
+upsampling.py
     """
     option = read_option(sys, help_string, 2, 2)
     working_path = option_dict.setdefault('path', '.')

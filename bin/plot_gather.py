@@ -22,8 +22,8 @@ iteration if not.
 --comp=x            specify which compontent to display, x by default
 
 for instance:
-plot_gather --src=200 --dir1=seism_syn --comp=x
-plot_gather --src=200 --dir1=seism_syn --dir2=seism_obs --comp=x
+plot_gather.py --src=200 --dir1=seism_syn --comp=x
+plot_gather.py --src=200 --dir1=seism_syn --dir2=seism_obs --comp=x
 """
     option_dict = read_option(sys, help_string, 2, 6)
 

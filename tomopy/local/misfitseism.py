@@ -40,7 +40,7 @@ def write_misf(misf, adjs, folder, gnsrc, n_i, n_k, nt, num_pt, nd):
 
 
 
-def get_adjs(working_path, nsrc, mtype, comp, fmin, fmax, nf):
+def get_adjs(working_path, mtype, comp, fmin, fmax, nf):
 
     if mtype == 'l2':
         misf_func = wavemisf
@@ -57,22 +57,24 @@ def get_adjs(working_path, nsrc, mtype, comp, fmin, fmax, nf):
     para = Fd2dParam(working_path)
     dim1, dim2 = para.dim
     nt = para.nt
+    num_src = para.number_of_moment_source
     pnm_seism = para.pnm_syn_filter, para.pnm_obs_filter
     pnm_seism = [working_path + '/' + x for x in pnm_seism]
     pnm_misf = working_path + '/' + 'misf'
 
-    for n_i in range(dim1):
-        for n_k in range(dim2):
-            num_pt = get_numpt(nsrc, n_i, n_k, working_path)
-            if num_pt == 0:
-                continue
-            seism_syn, time = read_seism(pnm_seism[0], nsrc, n_i, n_k, nt, num_pt)
-            seism_obs, time = read_seism(pnm_seism[1], nsrc, n_i, n_k, nt, num_pt)
-            misf = np.zeros(seism_syn.shape[2])
-            adjs = np.zeros_like(seism_syn)
-            for nsta in range(num_pt):
-                misf[nsta], adjs[id_comp, :, nsta] = misf_func(seism_obs[id_comp, :, nsta],
-                    seism_syn[id_comp, :, nsta])
-            write_misf(misf, adjs[id_comp, :, :], pnm_misf, nsrc, n_i, n_k, nt, num_pt, id_misf)
+    for nsrc in range(1, num_src+1):
+        for n_i in range(dim1):
+            for n_k in range(dim2):
+                num_pt = get_numpt(n_i, n_k, working_path)
+                if num_pt == 0:
+                    continue
+                seism_syn, time = read_seism(pnm_seism[0], nsrc, n_i, n_k, nt, num_pt)
+                seism_obs, time = read_seism(pnm_seism[1], nsrc, n_i, n_k, nt, num_pt)
+                misf = np.zeros(seism_syn.shape[2])
+                adjs = np.zeros_like(seism_syn)
+                for nsta in range(num_pt):
+                    misf[nsta], adjs[id_comp, :, nsta] = misf_func(seism_obs[id_comp, :, nsta],
+                        seism_syn[id_comp, :, nsta])
+                write_misf(misf, adjs[id_comp, :, :], pnm_misf, nsrc, n_i, n_k, nt, num_pt, id_misf)
 
 
