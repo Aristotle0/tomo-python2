@@ -17,8 +17,8 @@ The type of media information needs to be specified.
 --path=data         current directory by default
 
 for instance:
-plot_media --help
-plot_media --display=vp
+plot_media.py --help
+plot_media.py --display=vp
 """
     option_dict = read_option(sys, help_string, 1, 3)
 
