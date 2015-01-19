@@ -15,7 +15,8 @@ setup(
         'netCDF4',
     ],
     scripts=[
-        'bin/filter.py',
+        'bin/filter_kernel.py',
+        'bin/filter_seism.py',
         'bin/misfit.py',
         'bin/plot_gather.py',
         'bin/plot_kernel.py',

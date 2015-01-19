@@ -15,7 +15,7 @@ iteration if not. A working path can be specified.
 --path=data         default as the current directory
 
 for instance:
-filter.py
+filter_seism.py
 """
     option_dict = read_option(sys, help_string, 1, 3)
 
