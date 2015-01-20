@@ -1,6 +1,6 @@
 from tomopy.local.param import Fd2dParam
 from tomopy.local.utility import read_option
-from tomopy.local.inv2media import import_inv, exp_media, myinterp2d, get_coord
+from tomopy.local.inv2media import *
 import sys
 
 
@@ -23,6 +23,7 @@ upsampling.py
 
     para = Fd2dParam(working_path)
     dim1, dim2 = para.dim
+    ni, nk = para.ni, para.nk
 
     tmp_path = working_path + '/' + 'temp'
     lam_inv, mu_inv, x_inv, z_inv = import_inv(tmp_path)
@@ -34,3 +35,5 @@ upsampling.py
             lam = myinterp2d(x_inv, z_inv, lam_inv, x, z)
             mu = myinterp2d(x_inv, z_inv, mu_inv, x, z)
             exp_media(tmp_path, input_path, lam, mu, n_i, n_k)
+    media_extend(dim1, dim2, ni, nk)
+    media_exchange(dim1, dim2, ni, nk)
