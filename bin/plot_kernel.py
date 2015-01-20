@@ -15,19 +15,19 @@ This program is to plot the kernel pattern.
 
 --help              help information
 --path=data         default as the current directory
---display=ka        choose ka or kb to display, default ka
+--comp=ka        choose ka or kb to display, default ka
 --dx=0.025          specify the length of grid in x coordinate
 --dz=0.025          default = dx
 --cut=0.5           specify display value scope, full value for 1 and half for 0.5
 
 for instance:
 plot_kernel.py
-plot_kernel.py --path=data --display=ka --dx=0.025 --cut=0.1
+plot_kernel.py --path=data --comp=ka --dx=0.025 --cut=0.1
 """
     option_dict = read_option(sys, help_string, 1, 6)
 
     working_path = option_dict.setdefault('path', '.')
-    ker_comp = option_dict.setdefault('display', 'ka')
+    ker_comp = option_dict.setdefault('comp', 'ka')
     dx = float(option_dict.setdefault('dx', 1))
     dz = float(option_dict.setdefault('dz', dx))
     cut = float(option_dict.setdefault('cut', 1))

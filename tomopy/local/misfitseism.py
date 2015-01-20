@@ -3,7 +3,6 @@ from .param import Fd2dParam, get_numpt
 from .ioseism import read_seism
 import numpy as np
 from netCDF4 import Dataset
-from scipy.integrate import cumtrapz
 
 def write_misf(misf, adjs, folder, gnsrc, n_i, n_k, nt, num_pt, nd):
     """ Write misfits
@@ -11,9 +10,9 @@ def write_misf(misf, adjs, folder, gnsrc, n_i, n_k, nt, num_pt, nd):
     Parameters
     ----------
     misf : ndarray
-        (num_pt,) misfit values
+        (3, num_pt) misfit values
     ajds : ndarray
-        (nt, num_pt) adjoint source function
+        (nt, 3, num_pt) adjoint source function
     folder : string
         Folder name where the file we want is
     gnsrc : int
@@ -34,9 +33,9 @@ def write_misf(misf, adjs, folder, gnsrc, n_i, n_k, nt, num_pt, nd):
     fnc.createDimension('num_pt', num_pt)
     fnc.createDimension('time', nt)
     misfid = fnc.createVariable('misf', 'f', ('geo', 'num_pt',))
-    misfid[nd, :] = misf
+    misfid[:, :] = misf
     adjsid = fnc.createVariable('adjs', 'f', ('time', 'geo', 'num_pt'))
-    adjsid[:, nd, :] = adjs
+    adjsid[:, :, :] = adjs
     fnc.close()
 
 
@@ -70,7 +69,7 @@ def get_adjs(working_path, mtype, comp, fmin, fmax, nf):
     stept = para.stept
 
     if mtype == 'l2':
-        misf_func = wavemisf
+        misf_func = lambda x, y : wavemisf(x, y, stept)
     elif mtype == 'wavelet':
         misf_func = lambda x, y : waveletmisf(x, y, fmin, fmax, nf)
     elif mtype == 'cc':
@@ -95,12 +94,11 @@ def get_adjs(working_path, mtype, comp, fmin, fmax, nf):
                     continue
                 seism_syn, time = read_seism(pnm_seism[0], nsrc, n_i, n_k, nt, num_pt)
                 seism_obs, time = read_seism(pnm_seism[1], nsrc, n_i, n_k, nt, num_pt)
-                misf = np.zeros(seism_syn.shape[2])
-                adjs = np.zeros_like(seism_syn)
+                misf = np.zeros([3, num_pt], dtype=np.float32)
+                adjs = np.zeros([nt, 3, num_pt], dtype=np.float32, order='F')
                 for nsta in range(num_pt):
-                    disp_obs = cumtrapz(seism_obs[id_comp, :, nsta], dx=stept, initial=0)
-                    disp_syn = cumtrapz(seism_syn[id_comp, :, nsta], dx=stept, initial=0)
-                    misf[nsta], adjs[id_comp, :, nsta] = misf_func(disp_obs, disp_syn)
-                write_misf(misf, adjs[id_comp, :, :], pnm_misf, nsrc, n_i, n_k, nt, num_pt, id_misf)
+                    misf[id_misf, nsta], adjs[:, id_misf, nsta] = \
+                            misf_func(seism_obs[id_comp, :, nsta], seism_syn[id_comp, :, nsta])
+                write_misf(misf, adjs, pnm_misf, nsrc, n_i, n_k, nt, num_pt, id_misf)
 
 

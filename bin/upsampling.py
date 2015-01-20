@@ -18,7 +18,7 @@ results to finer grid.
 for instance:
 upsampling.py
     """
-    option = read_option(sys, help_string, 2, 2)
+    option_dict = read_option(sys, help_string, 1, 2)
     working_path = option_dict.setdefault('path', '.')
 
     para = Fd2dParam(working_path)
@@ -27,10 +27,10 @@ upsampling.py
     tmp_path = working_path + '/' + 'temp'
     lam_inv, mu_inv, x_inv, z_inv = import_inv(tmp_path)
 
-    coord_path = working_path + '/' + 'input'
+    input_path = working_path + '/' + 'input'
     for n_i in range(dim1):
         for n_k in range(dim2):
-            x, z = get_coord(coord_path, n_i, n_k)
+            x, z = get_coord(input_path, n_i, n_k)
             lam = myinterp2d(x_inv, z_inv, lam_inv, x, z)
             mu = myinterp2d(x_inv, z_inv, mu_inv, x, z)
-            exp_media(lam, mu, n_i, n_k)
+            exp_media(tmp_path, input_path, lam, mu, n_i, n_k)
