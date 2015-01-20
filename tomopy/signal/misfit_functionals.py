@@ -1,6 +1,6 @@
 from .pycwt import *
 import numpy as np
-from scipy.integrate import simps
+from scipy.integrate import simps, cumtrapz
 
 __all__ = ['ccmisf', 'wavemisf', 'waveletmisf']
 
@@ -17,11 +17,13 @@ def ccmisf(obs, syn, stept):
     return misf, adjs
 
 
-def wavemisf(obs, syn):
+def wavemisf(obs, syn, stept):
     """ L2 waveform misfit
     """
-    misf = sum(1./2*(obs-syn)**2)
-    adjs = (syn - obs)[::-1]
+    disp_obs = cumtrapz(obs, dx=stept, initial=0)
+    disp_syn = cumtrapz(syn, dx=stept, initial=0)
+    misf = sum(1./2*(disp_obs-disp_syn)**2)
+    adjs = (disp_syn - disp_obs)[::-1]
     return misf, adjs
 
 def waveletmisf(obs, syn, fmin, fmax, nf=100):
